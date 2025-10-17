@@ -3,9 +3,8 @@ const nextConfig = {
   // 静态导出配置（用于Tomcat部署）
   output: 'export',
   
-  // 如果部署在子目录，需要设置basePath和assetPrefix
+  // Tomcat部署路径
   basePath: '/security-inspection',
-  assetPrefix: '/security-inspection',
   
   eslint: {
     ignoreDuringBuilds: true,

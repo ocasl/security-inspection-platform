@@ -61,12 +61,13 @@ export default function AnalyticsPage() {
   const userProfiles = generateUserProfiles()
 
   // 设备状态分布
+  // 设备状态分布（只显示数量大于0的状态，避免显示"离线 0 (0%)"）
   const deviceStatusData = [
     { name: "在线", value: deviceStatuses.filter(d => d.status === "在线").length, color: "hsl(var(--chart-2))" },
     { name: "故障", value: deviceStatuses.filter(d => d.status === "故障").length, color: "hsl(var(--destructive))" },
     { name: "维护", value: deviceStatuses.filter(d => d.status === "维护").length, color: "hsl(var(--chart-3))" },
     { name: "离线", value: deviceStatuses.filter(d => d.status === "离线").length, color: "hsl(var(--muted))" },
-  ]
+  ].filter(item => item.value > 0)
 
   const COLORS = ["hsl(var(--chart-1))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))", "hsl(var(--chart-5))"]
 

@@ -88,7 +88,7 @@ export function TopNav() {
           <Link href="/" className="flex items-center gap-3 group">
             <div className="relative h-10 w-10 rounded-lg overflow-hidden shadow-lg group-hover:shadow-xl transition-all">
               <NextImage
-                src="/header.png"
+                src="/security-inspection/header.png"
                 alt="守门神科技"
                 fill
                 className="object-contain"
@@ -96,7 +96,7 @@ export function TopNav() {
             </div>
             <div className="flex flex-col">
               <span className="text-base font-bold text-foreground tracking-wide">
-                智慧安检管理平台
+                成安县人民法院 - 智慧安检管理平台
               </span>
               <span className="text-xs text-muted-foreground font-medium">广东守门神科技集团</span>
             </div>
@@ -133,7 +133,7 @@ export function TopNav() {
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-chart-2/10 border border-chart-2/30">
               <div className="w-2 h-2 rounded-full bg-chart-2 animate-pulse shadow-lg shadow-chart-2/50" />
-              <span className="text-xs font-semibold text-chart-2">X光机在线</span>
+              <span className="text-xs font-semibold text-chart-2">安检机在线</span>
             </div>
             <div className="text-xs text-muted-foreground">
               

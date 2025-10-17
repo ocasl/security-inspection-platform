@@ -22,7 +22,7 @@ export const topProhibitedItems = [
 export interface DeviceStatus {
   id: string
   name: string
-  type: "X光机" | "金属探测器" | "人脸识别" | "AI分析服务器" | "分拣机"
+  type: "安检机" | "金属探测器" | "人脸识别" | "AI分析服务器" | "分拣机"
   location: string
   status: "在线" | "离线" | "故障" | "维护"
   healthScore: number
@@ -35,8 +35,8 @@ export interface DeviceStatus {
 export const deviceStatuses: DeviceStatus[] = [
   {
     id: "DEV-003",
-    name: "X光机",
-    type: "X光机",
+    name: "安检机",
+    type: "安检机",
     location: "通道C",
     status: "在线",
     healthScore: 85,

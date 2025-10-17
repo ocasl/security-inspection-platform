@@ -10,7 +10,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6">
       <div className="border-l-4 border-l-primary pl-4 py-3 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent shadow-lg shadow-primary/5">
-        <h1 className="text-3xl font-bold tracking-tight text-balance text-foreground">智慧安检管理平台 - 数据总览</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-balance text-foreground">成安县人民法院 - 智慧安检管理平台 - 数据总览</h1>
         <p className="text-muted-foreground mt-2 text-sm">
           <span className="font-semibold text-foreground">广东守门神科技集团</span> | 
           设备运行周期：<span className="text-primary font-semibold"></span>

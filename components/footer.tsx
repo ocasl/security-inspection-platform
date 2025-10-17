@@ -125,7 +125,7 @@ export function Footer() {
           <div className="flex flex-col items-center text-center">
             <div className="w-32 h-32 relative mb-3 border-2 border-primary/20 rounded-lg overflow-hidden">
               <Image
-                src="/qrcode.jpg"
+                src="/security-inspection/qrcode.jpg"
                 alt="守门神公众号"
                 fill
                 className="object-cover"
