@@ -7,7 +7,12 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "eslint .",
-    "start": "next start"
+    "start": "next start",
+    "pages:build": "pnpm build",
+    "pages:deploy": "pnpm pages:build",
+    "tomcat:build": "next build",
+    "tomcat:package": "npm run tomcat:build && cd out && tar -czf ../security-inspection.tar.gz .",
+    "tomcat:package-zip": "npm run tomcat:build && powershell Compress-Archive -Path out/* -DestinationPath security-inspection.zip -Force"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

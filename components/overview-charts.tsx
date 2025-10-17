@@ -5,12 +5,12 @@ import { Area, AreaChart, Bar, BarChart, CartesianGrid, Line, LineChart, Respons
 import { generateDailyData } from "@/lib/mock-data"
 
 export function OverviewCharts() {
-  // 生成5月到10月的数据
-  const startDate = new Date("2025-05-01")
-  const endDate = new Date("2025-10-15")
+  // 生成2月到4月的数据
+  const startDate = new Date("2025-02-01")
+  const endDate = new Date("2025-04-30")
 
-  const detectionData = generateDailyData(startDate, endDate, 8500, 2000)
-  const alertData = generateDailyData(startDate, endDate, 45, 20)
+  const detectionData = generateDailyData(startDate, endDate, 100, 40, 150)
+  const alertData = generateDailyData(startDate, endDate, 0.8, 1, 2)
 
   // 按月汇总数据
   const monthlyDetections = detectionData
@@ -50,10 +50,10 @@ export function OverviewCharts() {
 
   return (
     <div className="grid gap-6 md:grid-cols-2">
-      <Card className="shadow-md border-t-4 border-t-primary">
+      <Card className="shadow-lg border border-primary/30 shadow-primary/10 bg-card/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-lg font-bold">安检检测趋势</CardTitle>
-          <CardDescription>2025年5月 - 10月每日平均检测量</CardDescription>
+          <CardTitle className="text-lg font-bold text-foreground">安检检测趋势</CardTitle>
+          <CardDescription>每日平均检测量</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>
@@ -88,10 +88,10 @@ export function OverviewCharts() {
         </CardContent>
       </Card>
 
-      <Card className="shadow-md border-t-4 border-t-destructive">
+      <Card className="shadow-lg border border-destructive/30 shadow-destructive/10 bg-card/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-lg font-bold">违禁品检出统计</CardTitle>
-          <CardDescription>2025年5月 - 10月违禁品检出数量</CardDescription>
+          <CardTitle className="text-lg font-bold text-foreground">违禁品检出统计</CardTitle>
+          <CardDescription>违禁品检出数量</CardDescription>
         </CardHeader>
         <CardContent>
           <ResponsiveContainer width="100%" height={300}>

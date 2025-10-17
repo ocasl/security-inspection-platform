@@ -1,5 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // 静态导出配置（用于Tomcat部署）
+  output: 'export',
+  
+  // 如果部署在子目录，需要设置basePath和assetPrefix
+  basePath: '/security-inspection',
+  assetPrefix: '/security-inspection',
+  
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -9,6 +16,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  
+  // 禁用不支持的功能
+  trailingSlash: true,
 }
 
 export default nextConfig

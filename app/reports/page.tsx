@@ -50,12 +50,12 @@ export default function ReportsPage() {
 
   // 性能报告
   const performanceMetrics = [
-    { metric: "日均检测量", value: "8,756", change: "+12.5%", trend: "up" },
+    { metric: "日均检测量", value: "101", change: "工作日平均", trend: "up" },
     { metric: "AI准确率", value: "96.8%", change: "+1.3%", trend: "up" },
     { metric: "平均处理时间", value: "2.3秒", change: "-0.5秒", trend: "up" },
-    { metric: "设备故障率", value: "0.8%", change: "-0.3%", trend: "up" },
+    { metric: "设备在线率", value: "100%", change: "持续稳定", trend: "up" },
     { metric: "误报率", value: "2.1%", change: "-0.7%", trend: "up" },
-    { metric: "人工复核率", value: "1.4%", change: "+0.2%", trend: "down" }
+    { metric: "人工复核率", value: "0.39%", change: "极低水平", trend: "down" }
   ]
 
   return (
@@ -151,9 +151,9 @@ export default function ReportsPage() {
                 <FileText className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">245,678</div>
+                <div className="text-2xl font-bold">6,347</div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  最近30天
+                  
                 </p>
               </CardContent>
             </Card>
@@ -164,9 +164,9 @@ export default function ReportsPage() {
                 <AlertTriangle className="h-4 w-4 text-destructive" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-destructive">1,247</div>
+                <div className="text-2xl font-bold text-destructive">45</div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  检出率 0.51%
+                  检出率 0.71%
                 </p>
               </CardContent>
             </Card>
@@ -177,9 +177,9 @@ export default function ReportsPage() {
                 <AlertTriangle className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">876</div>
+                <div className="text-2xl font-bold">52</div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  已处理 823
+                  已处理 48
                 </p>
               </CardContent>
             </Card>
@@ -190,9 +190,9 @@ export default function ReportsPage() {
                 <TrendingUp className="h-4 w-4 text-chart-2" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">3,456</div>
+                <div className="text-2xl font-bold">25</div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  复核率 1.41%
+                  复核率 0.39%
                 </p>
               </CardContent>
             </Card>
@@ -216,18 +216,22 @@ export default function ReportsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {Array.from({ length: 7 }).map((_, i) => (
+                  {[
+                    { date: '2025-04-29', detections: 115, violations: 1, reviews: 0, alerts: 1, time: 2.1 },
+                    { date: '2025-04-28', detections: 98, violations: 0, reviews: 1, alerts: 0, time: 2.3 },
+                    { date: '2025-04-25', detections: 127, violations: 2, reviews: 1, alerts: 2, time: 2.5 },
+                    { date: '2025-04-24', detections: 103, violations: 1, reviews: 0, alerts: 1, time: 2.2 },
+                    { date: '2025-04-23', detections: 89, violations: 0, reviews: 0, alerts: 0, time: 2.0 },
+                    { date: '2025-04-22', detections: 134, violations: 1, reviews: 0, alerts: 1, time: 2.4 },
+                    { date: '2025-04-21', detections: 107, violations: 0, reviews: 1, alerts: 0, time: 2.2 },
+                  ].map((row, i) => (
                     <TableRow key={i}>
-                      <TableCell className="font-medium">
-                        2025-10-{String(15 - i).padStart(2, '0')}
-                      </TableCell>
-                      <TableCell>{(8500 + Math.random() * 2000).toFixed(0)}</TableCell>
-                      <TableCell className="text-destructive">
-                        {(40 + Math.random() * 20).toFixed(0)}
-                      </TableCell>
-                      <TableCell>{(120 + Math.random() * 50).toFixed(0)}</TableCell>
-                      <TableCell>{(30 + Math.random() * 15).toFixed(0)}</TableCell>
-                      <TableCell>{(2 + Math.random() * 0.5).toFixed(2)}秒</TableCell>
+                      <TableCell className="font-medium">{row.date}</TableCell>
+                      <TableCell>{row.detections}</TableCell>
+                      <TableCell className="text-destructive">{row.violations}</TableCell>
+                      <TableCell>{row.reviews}</TableCell>
+                      <TableCell>{row.alerts}</TableCell>
+                      <TableCell>{row.time}秒</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>

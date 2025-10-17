@@ -1,23 +1,21 @@
 // ==================== 违禁品类别数据 ====================
+// 法院安检常见违禁品（日常物品，无严重违法物品）
 export const prohibitedItems = [
-  "枪支弹药", "爆炸物品", "管制刀具", "易燃易爆物", "腐蚀性物品",
-  "毒害品", "放射性物品", "传染病病原体", "其他危险品", "酒类",
-  "打火机", "火柴", "电池类", "液体类", "气体类",
-  "利器工具", "钝器", "警用器械", "军用物品", "违禁药品",
-  "毒品及吸毒工具", "淫秽物品", "间谍器材", "非法出版物", "假币",
-  "文物", "珍稀动植物", "仿真枪", "弩", "电击器",
-  "催泪器", "防卫器", "钢珠枪", "指节铜环", "三棱刀",
-  "带刺手套", "其他违禁品"
+  "液体超标", "打火机", "火柴", "充电宝", "电池类", 
+  "小刀", "剪刀", "指甲刀", "钥匙扣工具", "美工刀",
+  "酒类", "喷雾", "雨伞", "自拍杆", "玻璃瓶",
+  "金属制品", "尖锐物品", "易燃物", "气体打火机", "利器工具",
+  "水果刀", "折叠刀", "瑞士军刀", "多功能工具", "螺丝刀",
+  "扳手", "钳子", "锤子", "其他工具", "其他违禁品"
 ]
 
 export const topProhibitedItems = [
-  { name: "管制刀具", count: 1247, trend: 12 },
-  { name: "易燃易爆物", count: 823, trend: -5 },
-  { name: "液体类", count: 612, trend: 8 },
-  { name: "打火机", count: 487, trend: 3 },
-  { name: "利器工具", count: 356, trend: -2 },
-  { name: "腐蚀性物品", count: 234, trend: 15 },
-  { name: "电池类", count: 189, trend: 6 },
+  { name: "液体超标", count: 18, trend: 2 },
+  { name: "打火机", count: 12, trend: -1 },
+  { name: "小刀", count: 8, trend: 1 },
+  { name: "充电宝", count: 4, trend: 0 },
+  { name: "剪刀", count: 2, trend: 0 },
+  { name: "钥匙扣工具", count: 1, trend: 0 },
 ]
 
 // ==================== 设备状态数据 ====================
@@ -36,74 +34,16 @@ export interface DeviceStatus {
 
 export const deviceStatuses: DeviceStatus[] = [
   {
-    id: "DEV-001",
-    name: "X光机-01",
-    type: "X光机",
-    location: "通道A",
-    status: "在线",
-    healthScore: 98,
-    lastCheck: new Date(Date.now() - 300000).toISOString(),
-    temperature: 42,
-    workload: 75,
-    processedToday: 1247
-  },
-  {
-    id: "DEV-002",
-    name: "X光机-02",
-    type: "X光机",
-    location: "通道B",
-    status: "在线",
-    healthScore: 95,
-    lastCheck: new Date(Date.now() - 180000).toISOString(),
-    temperature: 45,
-    workload: 82,
-    processedToday: 1432
-  },
-  {
     id: "DEV-003",
-    name: "X光机-03",
+    name: "X光机",
     type: "X光机",
     location: "通道C",
-    status: "故障",
-    healthScore: 45,
-    lastCheck: new Date(Date.now() - 7200000).toISOString(),
-    temperature: 68,
-    workload: 0,
-    processedToday: 234
-  },
-  {
-    id: "DEV-004",
-    name: "金属探测器-01",
-    type: "金属探测器",
-    location: "入口A",
     status: "在线",
-    healthScore: 100,
-    lastCheck: new Date(Date.now() - 120000).toISOString(),
-    workload: 65,
-    processedToday: 2341
-  },
-  {
-    id: "DEV-005",
-    name: "AI分析服务器-主",
-    type: "AI分析服务器",
-    location: "机房01",
-    status: "在线",
-    healthScore: 92,
-    lastCheck: new Date(Date.now() - 60000).toISOString(),
-    temperature: 38,
-    workload: 88,
-    processedToday: 8756
-  },
-  {
-    id: "DEV-006",
-    name: "分拣机-01",
-    type: "分拣机",
-    location: "分拣区A",
-    status: "在线",
-    healthScore: 96,
-    lastCheck: new Date(Date.now() - 240000).toISOString(),
-    workload: 71,
-    processedToday: 1876
+    healthScore: 85,
+    lastCheck: "2025-04-30T18:00:00Z",
+    temperature: 35,
+    workload: 75,
+    processedToday: 127
   }
 ]
 
@@ -130,7 +70,20 @@ export function generateDetectionRecords(count: number): DetectionRecord[] {
   const results: Array<"安全" | "可疑" | "危险" | "未识别"> = ["安全", "可疑", "危险", "未识别"]
   const reviewStatus: Array<"待审核" | "确认" | "否决"> = ["待审核", "确认", "否决"]
   
+  // 设备使用期间：2025年2月1日-4月30日(89天) 和 2025年10月16-17日(2天)
+  // 将大部分数据分配到2-4月，少量分配到10月
+  const period1Start = new Date("2025-02-01").getTime()
+  const period1End = new Date("2025-04-30").getTime()
+  const period2Start = new Date("2025-10-16").getTime()
+  const period2End = new Date("2025-10-17").getTime()
+  
   return Array.from({ length: count }, (_, i) => {
+    // 95%的数据来自2-4月，5%来自10月16-17日
+    const usePeriod1 = Math.random() < 0.95
+    const timestamp = usePeriod1
+      ? new Date(period1Start + Math.random() * (period1End - period1Start)).toISOString()
+      : new Date(period2Start + Math.random() * (period2End - period2Start)).toISOString()
+    
     const result = results[Math.floor(Math.random() * results.length)]
     const needsReview = result !== "安全" || Math.random() > 0.8
     
@@ -150,8 +103,8 @@ export function generateDetectionRecords(count: number): DetectionRecord[] {
 
     return {
       id: `DET-${String(i + 1).padStart(8, "0")}`,
-      timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-      deviceId: deviceStatuses[Math.floor(Math.random() * 3)].id,
+      timestamp,
+      deviceId: "DEV-003",
       imageUrl: `/placeholder.jpg`,
       aiResult: result,
       confidence: 0.5 + Math.random() * 0.5,
@@ -186,22 +139,28 @@ export function generateAlertRecords(count: number): AlertRecord[] {
   const statuses: Array<"未处理" | "处理中" | "已处理" | "已忽略"> = 
     ["未处理", "处理中", "已处理", "已忽略"]
 
+  // 2025年2月1日到4月30日
+  const startDate = new Date("2025-02-01").getTime()
+  const endDate = new Date("2025-04-30").getTime()
+  const timeRange = endDate - startDate
+
   return Array.from({ length: count }, (_, i) => {
     const level = levels[Math.floor(Math.random() * levels.length)]
     const status = statuses[Math.floor(Math.random() * statuses.length)]
     const isHandled = status === "已处理" || status === "已忽略"
+    const timestamp = new Date(startDate + Math.random() * timeRange).toISOString()
 
     return {
       id: `ALERT-${String(i + 1).padStart(6, "0")}`,
-      timestamp: new Date(Date.now() - Math.random() * 7200000).toISOString(),
+      timestamp,
       level,
       type: types[Math.floor(Math.random() * types.length)],
-      deviceId: deviceStatuses[Math.floor(Math.random() * deviceStatuses.length)].id,
+      deviceId: "DEV-003",
       detectionId: Math.random() > 0.5 ? `DET-${String(Math.floor(Math.random() * 10000)).padStart(8, "0")}` : undefined,
       message: `检测到${prohibitedItems[Math.floor(Math.random() * prohibitedItems.length)]}，置信度 ${(Math.random() * 40 + 60).toFixed(1)}%`,
       status,
       handler: isHandled ? `操作员${Math.floor(Math.random() * 5) + 1}` : undefined,
-      handleTime: isHandled ? new Date(Date.now() - Math.random() * 3600000).toISOString() : undefined,
+      handleTime: isHandled ? new Date(new Date(timestamp).getTime() + Math.random() * 3600000).toISOString() : undefined,
       soundAlert: level === "高" || level === "紧急"
     }
   })
@@ -335,16 +294,153 @@ export function generateTimeSeriesData(startDate: Date, endDate: Date, baseValue
   return data
 }
 
-export function generateDailyData(startDate: Date, endDate: Date, baseValue: number, variance: number) {
+export function generateDailyData(startDate: Date, endDate: Date, baseValue: number, variance: number, maxDaily: number = 150) {
   const data = []
   const current = new Date(startDate)
+  
+  // 设备使用期间：2025年2月1日-4月30日 和 2025年10月16-17日
+  const period1Start = new Date("2025-02-01")
+  const period1End = new Date("2025-04-30")
+  const period2Start = new Date("2025-10-16")
+  const period2End = new Date("2025-10-17")
+  
+  // 辅助函数：判断日期是否在使用期间
+  const isInUsagePeriod = (date: Date) => {
+    const time = date.getTime()
+    return (time >= period1Start.getTime() && time <= period1End.getTime()) ||
+           (time >= period2Start.getTime() && time <= period2End.getTime())
+  }
 
   while (current <= endDate) {
-    const value = Math.max(0, baseValue + (Math.random() - 0.5) * variance)
-    data.push({
-      date: current.toISOString().split("T")[0],
-      value: Math.round(value),
-    })
+    const dateStr = current.toISOString().split("T")[0]
+    
+    // 如果不在使用期间，跳过
+    if (!isInUsagePeriod(current)) {
+      current.setDate(current.getDate() + 1)
+      continue
+    }
+    
+    // 检查是否为工作日（周一到周五）
+    const dayOfWeek = current.getDay()
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
+    
+    // 周末没有数据
+    if (isWeekend) {
+      data.push({
+        date: dateStr,
+        value: 0,
+      })
+    } else {
+      // 工作日：每天最多maxDaily次（默认150）
+      const value = Math.min(maxDaily, Math.max(0, baseValue + (Math.random() - 0.5) * variance))
+      data.push({
+        date: dateStr,
+        value: Math.round(value),
+      })
+    }
+    current.setDate(current.getDate() + 1)
+  }
+
+  return data
+}
+
+// 生成违禁品检出数据（特殊规则：一天最多2个，50%的日子为0，周末无数据）
+export function generateViolationData(startDate: Date, endDate: Date) {
+  const data = []
+  const current = new Date(startDate)
+  
+  // 设备使用期间：2025年2月1日-4月30日 和 2025年10月16-17日
+  const period1Start = new Date("2025-02-01")
+  const period1End = new Date("2025-04-30")
+  const period2Start = new Date("2025-10-16")
+  const period2End = new Date("2025-10-17")
+  
+  // 辅助函数：判断日期是否在使用期间
+  const isInUsagePeriod = (date: Date) => {
+    const time = date.getTime()
+    return (time >= period1Start.getTime() && time <= period1End.getTime()) ||
+           (time >= period2Start.getTime() && time <= period2End.getTime())
+  }
+
+  while (current <= endDate) {
+    const dateStr = current.toISOString().split("T")[0]
+    
+    // 如果不在使用期间，跳过
+    if (!isInUsagePeriod(current)) {
+      current.setDate(current.getDate() + 1)
+      continue
+    }
+    
+    const dayOfWeek = current.getDay()
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
+    
+    if (isWeekend) {
+      // 周末没有数据
+      data.push({
+        date: dateStr,
+        value: 0,
+      })
+    } else {
+      // 工作日：50%的日子没有违禁品
+      const hasViolation = Math.random() > 0.5
+      const value = hasViolation ? Math.floor(Math.random() * 2) + 1 : 0 // 0-2个
+      
+      data.push({
+        date: dateStr,
+        value,
+      })
+    }
+    current.setDate(current.getDate() + 1)
+  }
+
+  return data
+}
+
+// 生成人工复核数据（一天最多1个，周末无数据）
+export function generateReviewData(startDate: Date, endDate: Date) {
+  const data = []
+  const current = new Date(startDate)
+  
+  // 设备使用期间：2025年2月1日-4月30日 和 2025年10月16-17日
+  const period1Start = new Date("2025-02-01")
+  const period1End = new Date("2025-04-30")
+  const period2Start = new Date("2025-10-16")
+  const period2End = new Date("2025-10-17")
+  
+  // 辅助函数：判断日期是否在使用期间
+  const isInUsagePeriod = (date: Date) => {
+    const time = date.getTime()
+    return (time >= period1Start.getTime() && time <= period1End.getTime()) ||
+           (time >= period2Start.getTime() && time <= period2End.getTime())
+  }
+
+  while (current <= endDate) {
+    const dateStr = current.toISOString().split("T")[0]
+    
+    // 如果不在使用期间，跳过
+    if (!isInUsagePeriod(current)) {
+      current.setDate(current.getDate() + 1)
+      continue
+    }
+    
+    const dayOfWeek = current.getDay()
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6
+    
+    if (isWeekend) {
+      // 周末没有数据
+      data.push({
+        date: dateStr,
+        value: 0,
+      })
+    } else {
+      // 工作日：一天最多1个，40%的概率有复核
+      const value = Math.random() > 0.6 ? 1 : 0
+      
+      data.push({
+        date: dateStr,
+        value,
+      })
+    }
     current.setDate(current.getDate() + 1)
   }
 
@@ -359,29 +455,18 @@ export interface UserProfile {
 }
 
 export function generateUserProfiles(): UserProfile[] {
-  const profiles: UserProfile[] = []
-  for (let i = 0; i < 24; i++) {
-    const hour = `${String(i).padStart(2, '0')}:00`
-    let count: number
-    let type: "高峰期" | "平峰期" | "低峰期"
-    
-    if (i >= 8 && i <= 10) {
-      count = 300 + Math.random() * 200
-      type = "高峰期"
-    } else if (i >= 17 && i <= 19) {
-      count = 350 + Math.random() * 250
-      type = "高峰期"
-    } else if (i >= 11 && i <= 16) {
-      count = 150 + Math.random() * 100
-      type = "平峰期"
-    } else {
-      count = 20 + Math.random() * 50
-      type = "低峰期"
-    }
-    
-    profiles.push({ hour, count: Math.round(count), type })
-  }
-  return profiles
+  // 法院朝九晚五，只有9:00-17:00有数据
+  return [
+    { hour: "09:00", count: 45, type: "平峰期" },
+    { hour: "10:00", count: 89, type: "高峰期" },
+    { hour: "11:00", count: 102, type: "高峰期" },
+    { hour: "12:00", count: 35, type: "低峰期" },  // 午休时间，人少
+    { hour: "13:00", count: 28, type: "低峰期" },  // 午休时间，人少
+    { hour: "14:00", count: 98, type: "高峰期" },
+    { hour: "15:00", count: 115, type: "高峰期" },
+    { hour: "16:00", count: 92, type: "高峰期" },
+    { hour: "17:00", count: 48, type: "平峰期" },  // 下班时间
+  ]
 }
 
 // ==================== 系统配置数据 ====================

@@ -9,13 +9,30 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { generateDetectionRecords } from "@/lib/mock-data"
 import { CheckCircle2, XCircle, AlertTriangle, Image as ImageIcon, Clock, User } from "lucide-react"
-import { formatDistanceToNow } from "date-fns"
-import { zhCN } from "date-fns/locale"
+import { format } from "date-fns"
 import { useState } from "react"
+// 不再需要NextImage，使用普通img标签显示外部URL
+
+// @ts-ignore
+import imageData from "@/public/Thunderbit_ebc83b_20251017_032403.json"
+
+// X光图片列表 - 从JSON中提取
+const xrayImages = imageData
+  .map((item: any) => item.png || item.jpg || item.jpeg)
+  .filter((url: string) => url)
+
+// 随机获取X光图片
+const getRandomXrayImage = (id: string) => {
+  const index = parseInt(id.replace(/\D/g, '')) % xrayImages.length
+  return xrayImages[index]
+}
 
 export default function ReviewPage() {
   const [selectedReview, setSelectedReview] = useState<string>("confirm")
   const [reviewComment, setReviewComment] = useState("")
+  const [selectedDetection, setSelectedDetection] = useState<any>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitSuccess, setSubmitSuccess] = useState(false)
 
   // 筛选需要人工复核的记录
   const pendingReviews = generateDetectionRecords(100)
@@ -44,6 +61,28 @@ export default function ReviewPage() {
       case "未识别": return "outline"
       default: return "secondary"
     }
+  }
+
+  const handleSelectDetection = (detection: any) => {
+    setSelectedDetection(detection)
+    setSubmitSuccess(false)
+    setReviewComment("")
+  }
+
+  const handleSubmitReview = () => {
+    if (!selectedDetection) return
+    
+    setIsSubmitting(true)
+    // 模拟提交过程
+    setTimeout(() => {
+      setIsSubmitting(false)
+      setSubmitSuccess(true)
+      setTimeout(() => {
+        setSubmitSuccess(false)
+        setSelectedDetection(null)
+        setReviewComment("")
+      }, 2000)
+    }, 1000)
   }
 
   return (
@@ -123,10 +162,20 @@ export default function ReviewPage() {
                   {pendingReviews.map((detection, index) => (
                     <div
                       key={detection.id}
-                      className="flex items-start gap-3 rounded-lg border border-border bg-card/50 p-3 hover:bg-accent/50 transition-colors cursor-pointer"
+                      className={`flex items-start gap-3 rounded-lg border p-3 transition-colors cursor-pointer ${
+                        selectedDetection?.id === detection.id
+                          ? 'border-primary bg-primary/10'
+                          : 'border-border bg-card/50 hover:bg-accent/50'
+                      }`}
+                      onClick={() => handleSelectDetection(detection)}
                     >
-                      <div className="w-16 h-16 rounded bg-muted flex items-center justify-center flex-shrink-0">
-                        <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                      <div className="w-16 h-16 rounded overflow-hidden bg-black flex-shrink-0 relative border border-primary/20">
+                        <img
+                          src={getRandomXrayImage(detection.id)}
+                          alt="X-ray scan"
+                          className="w-full h-full object-cover"
+                          style={{ filter: 'contrast(1.2) brightness(1.1)' }}
+                        />
                       </div>
 
                       <div className="flex-1 space-y-1">
@@ -140,10 +189,7 @@ export default function ReviewPage() {
                             )}
                           </div>
                           <span className="text-xs text-muted-foreground">
-                            {formatDistanceToNow(new Date(detection.timestamp), { 
-                              addSuffix: true,
-                              locale: zhCN 
-                            })}
+                            {format(new Date(detection.timestamp), "yyyy-MM-dd HH:mm")}
                           </span>
                         </div>
 
@@ -168,8 +214,15 @@ export default function ReviewPage() {
                         )}
                       </div>
 
-                      <Button size="sm" variant="outline">
-                        复核
+                      <Button 
+                        size="sm" 
+                        variant={selectedDetection?.id === detection.id ? "default" : "outline"}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleSelectDetection(detection)
+                        }}
+                      >
+                        {selectedDetection?.id === detection.id ? "已选中" : "复核"}
                       </Button>
                     </div>
                   ))}
@@ -193,56 +246,63 @@ export default function ReviewPage() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    <div className="rounded-lg border border-border bg-muted/50 aspect-video flex items-center justify-center">
-                      <div className="text-center text-muted-foreground">
-                        <ImageIcon className="h-16 w-16 mx-auto mb-2" />
-                        <p className="text-sm">X光图像将在这里显示</p>
+                    {selectedDetection ? (
+                      <div className="rounded-lg border border-primary/30 bg-black aspect-video flex items-center justify-center overflow-hidden relative">
+                        <img
+                          src={getRandomXrayImage(selectedDetection.id)}
+                          alt="X-ray scan"
+                          className="w-full h-full object-contain"
+                          style={{ filter: 'contrast(1.2) brightness(1.1)' }}
+                        />
                       </div>
-                    </div>
+                    ) : (
+                      <div className="rounded-lg border border-border bg-muted/50 aspect-video flex items-center justify-center">
+                        <div className="text-center text-muted-foreground">
+                          <ImageIcon className="h-16 w-16 mx-auto mb-2" />
+                          <p className="text-sm">请从左侧选择项目进行复核</p>
+                        </div>
+                      </div>
+                    )}
 
-                    {pendingReviews.length > 0 && (
+                    {selectedDetection && (
                       <>
                         <div className="space-y-2">
                           <div className="flex justify-between text-sm">
                             <span className="text-muted-foreground">检测ID</span>
-                            <span className="font-medium">{pendingReviews[0].id}</span>
+                            <span className="font-medium">{selectedDetection.id}</span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-muted-foreground">AI判断</span>
-                            <Badge variant={getResultVariant(pendingReviews[0].aiResult)}>
-                              {pendingReviews[0].aiResult}
+                            <Badge variant={getResultVariant(selectedDetection.aiResult)}>
+                              {selectedDetection.aiResult}
                             </Badge>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-muted-foreground">置信度</span>
                             <span className="font-medium">
-                              {(pendingReviews[0].confidence * 100).toFixed(1)}%
+                              {(selectedDetection.confidence * 100).toFixed(1)}%
                             </span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-muted-foreground">检测设备</span>
-                            <span className="font-medium">{pendingReviews[0].deviceId}</span>
+                            <span className="font-medium">{selectedDetection.deviceId}</span>
                           </div>
                           <div className="flex justify-between text-sm">
                             <span className="text-muted-foreground">检测时间</span>
                             <span className="font-medium">
-                              {new Date(pendingReviews[0].timestamp).toLocaleString("zh-CN")}
+                              {format(new Date(selectedDetection.timestamp), "yyyy-MM-dd HH:mm:ss")}
                             </span>
                           </div>
                         </div>
 
-                        {pendingReviews[0].detectedItems.length > 0 && (
+                        {selectedDetection.detectedItems && selectedDetection.detectedItems.length > 0 && (
                           <div className="space-y-2">
-                            <Label>AI识别物品</Label>
-                            <div className="space-y-2">
-                              {pendingReviews[0].detectedItems.map((item, idx) => (
-                                <div key={idx} className="flex justify-between items-center p-2 rounded-lg bg-muted/50">
-                                  <div className="flex items-center gap-2">
-                                    <AlertTriangle className="h-4 w-4 text-destructive" />
-                                    <span className="text-sm font-medium">{item.category}</span>
-                                  </div>
-                                  <Badge variant="outline">{(item.confidence * 100).toFixed(1)}%</Badge>
-                                </div>
+                            <p className="text-sm font-medium">检出物品:</p>
+                            <div className="flex flex-wrap gap-2">
+                              {selectedDetection.detectedItems.map((item: any, idx: number) => (
+                                <Badge key={idx} variant="outline">
+                                  {item.category} ({(item.confidence * 100).toFixed(1)}%)
+                                </Badge>
                               ))}
                             </div>
                           </div>
@@ -295,11 +355,33 @@ export default function ReviewPage() {
                   </div>
 
                   <div className="flex gap-2">
-                    <Button className="flex-1" disabled={!pendingReviews.length}>
-                      <CheckCircle2 className="h-4 w-4 mr-2" />
-                      提交复核
+                    <Button 
+                      className="flex-1" 
+                      disabled={!selectedDetection || isSubmitting}
+                      onClick={handleSubmitReview}
+                    >
+                      {isSubmitting ? (
+                        <>正在提交...</>
+                      ) : submitSuccess ? (
+                        <>
+                          <CheckCircle2 className="h-4 w-4 mr-2" />
+                          提交成功！
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 className="h-4 w-4 mr-2" />
+                          提交复核
+                        </>
+                      )}
                     </Button>
-                    <Button variant="outline" disabled={!pendingReviews.length}>
+                    <Button 
+                      variant="outline" 
+                      disabled={!selectedDetection}
+                      onClick={() => {
+                        setSelectedDetection(null)
+                        setReviewComment("")
+                      }}
+                    >
                       跳过
                     </Button>
                   </div>
@@ -329,8 +411,13 @@ export default function ReviewPage() {
                     key={detection.id}
                     className="flex items-start gap-4 rounded-lg border border-border bg-card/50 p-4"
                   >
-                    <div className="w-20 h-20 rounded bg-muted flex items-center justify-center flex-shrink-0">
-                      <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                    <div className="w-20 h-20 rounded overflow-hidden bg-black flex-shrink-0 relative border border-primary/20">
+                      <img
+                        src={getRandomXrayImage(detection.id)}
+                        alt="X-ray scan"
+                        className="w-full h-full object-cover"
+                        style={{ filter: 'contrast(1.2) brightness(1.1)' }}
+                      />
                     </div>
 
                     <div className="flex-1 space-y-2">
@@ -352,10 +439,7 @@ export default function ReviewPage() {
                           </p>
                         </div>
                         <span className="text-xs text-muted-foreground">
-                          {formatDistanceToNow(new Date(detection.timestamp), { 
-                            addSuffix: true,
-                            locale: zhCN 
-                          })}
+                          {format(new Date(detection.timestamp), "yyyy-MM-dd HH:mm")}
                         </span>
                       </div>
 

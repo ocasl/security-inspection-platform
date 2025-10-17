@@ -25,11 +25,13 @@ import { generateDailyData, topProhibitedItems, generateUserProfiles, deviceStat
 import { TrendingUp, AlertTriangle, Activity, Shield } from "lucide-react"
 
 export default function AnalyticsPage() {
-  const startDate = new Date("2025-05-01")
-  const endDate = new Date("2025-10-15")
+  // 使用正确的日期范围：2025年2月-4月
+  const startDate = new Date("2025-02-01")
+  const endDate = new Date("2025-04-30")
 
-  const detectionData = generateDailyData(startDate, endDate, 8500, 2000)
-  const alertData = generateDailyData(startDate, endDate, 45, 20)
+  // 使用符合法院实际的数据量：每天80-150次
+  const detectionData = generateDailyData(startDate, endDate, 100, 40, 150)
+  const alertData = generateDailyData(startDate, endDate, 0.8, 1, 2)
 
   // 按月汇总检测数据
   const monthlyDetections = detectionData.reduce((acc: any[], item) => {
@@ -73,11 +75,14 @@ export default function AnalyticsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-balance">数据分析大屏</h1>
-          <p className="text-muted-foreground mt-2">智慧安检系统全方位数据可视化</p>
+          <p className="text-muted-foreground mt-2">
+            <span className="font-semibold text-foreground">成安县人民法院</span> | 
+            运行数据分析
+          </p>
         </div>
         <Badge variant="outline" className="text-sm">
-          <Activity className="h-3 w-3 mr-1 animate-pulse" />
-          实时更新
+          <Activity className="h-3 w-3 mr-1" />
+          版本号:SMS-ZHAJ-1
         </Badge>
       </div>
 
@@ -85,14 +90,13 @@ export default function AnalyticsPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="border-l-4 border-l-chart-1">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">今日检测</CardTitle>
+            <CardTitle className="text-sm font-medium">总检测次数</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">8,756</div>
-            <div className="flex items-center gap-1 text-xs text-chart-2 mt-1">
-              <TrendingUp className="h-3 w-3" />
-              <span>+12.5% 较昨日</span>
+            <div className="text-2xl font-bold">6,347</div>
+            <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
+              <span></span>
             </div>
           </CardContent>
         </Card>
@@ -103,8 +107,8 @@ export default function AnalyticsPage() {
             <AlertTriangle className="h-4 w-4 text-destructive" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-destructive">47</div>
-            <p className="text-xs text-muted-foreground mt-1">检出率 0.54%</p>
+            <div className="text-2xl font-bold text-destructive">45</div>
+            <p className="text-xs text-muted-foreground mt-1">检出率 0.71%</p>
           </CardContent>
         </Card>
 
@@ -115,18 +119,18 @@ export default function AnalyticsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-chart-2">96.8%</div>
-            <p className="text-xs text-muted-foreground mt-1">误报率 2.1%</p>
+            <p className="text-xs text-muted-foreground mt-1">人工复核 25次</p>
           </CardContent>
         </Card>
 
         <Card className="border-l-4 border-l-chart-3">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">设备健康度</CardTitle>
+            <CardTitle className="text-sm font-medium">设备在线率</CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">92%</div>
-            <p className="text-xs text-muted-foreground mt-1">5台在线 / 6台</p>
+            <div className="text-2xl font-bold">100%</div>
+            <p className="text-xs text-muted-foreground mt-1">1台在线 / 1台</p>
           </CardContent>
         </Card>
       </div>
@@ -136,7 +140,7 @@ export default function AnalyticsPage() {
         <Card>
           <CardHeader>
             <CardTitle>检测量趋势</CardTitle>
-            <CardDescription>过去6个月的检测量和违禁品检出统计</CardDescription>
+            <CardDescription>检测量和违禁品检出统计</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -203,8 +207,8 @@ export default function AnalyticsPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>24小时检测流量分布</CardTitle>
-            <CardDescription>用户检测高峰期分析</CardDescription>
+            <CardTitle>工作时间检测流量分布</CardTitle>
+            <CardDescription>（9:00-17:00）</CardDescription>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={300}>
@@ -293,29 +297,29 @@ export default function AnalyticsPage() {
       <Card>
         <CardHeader>
           <CardTitle>检测情况详细统计</CardTitle>
-          <CardDescription>按时间段、类别、结果等维度的统计数据</CardDescription>
+          <CardDescription>运行期间统计数据</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-4">
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">本月总检测</p>
-              <p className="text-2xl font-bold">245,678</p>
-              <p className="text-xs text-chart-2">环比 +18.2%</p>
+              <p className="text-sm text-muted-foreground">总检测次数</p>
+              <p className="text-2xl font-bold">6,347</p>
+              <p className="text-xs text-muted-foreground">63个工作日</p>
             </div>
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">本月违禁品</p>
-              <p className="text-2xl font-bold text-destructive">1,247</p>
-              <p className="text-xs text-muted-foreground">检出率 0.51%</p>
+              <p className="text-sm text-muted-foreground">违禁品检出</p>
+              <p className="text-2xl font-bold text-destructive">45</p>
+              <p className="text-xs text-muted-foreground">检出率 0.71%</p>
             </div>
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">人工复核</p>
-              <p className="text-2xl font-bold">3,456</p>
-              <p className="text-xs text-muted-foreground">复核率 1.41%</p>
+              <p className="text-2xl font-bold">25</p>
+              <p className="text-xs text-muted-foreground">复核率 0.39%</p>
             </div>
             <div className="space-y-2">
               <p className="text-sm text-muted-foreground">平均处理时长</p>
               <p className="text-2xl font-bold">2.3秒</p>
-              <p className="text-xs text-chart-2">效率 +12%</p>
+              <p className="text-xs text-chart-2">AI准确率 96.8%</p>
             </div>
           </div>
         </CardContent>

@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { aiModels } from "@/lib/mock-data"
 import { Brain, TrendingUp, Zap, AlertCircle, CheckCircle2, RefreshCw, Play } from "lucide-react"
+import { AIDataStream } from "@/components/ai-data-stream"
 
 export default function LearningPage() {
   const improvementSuggestions = [
@@ -244,103 +245,108 @@ export default function LearningPage() {
         </CardContent>
       </Card>
 
-      {/* AI模型性能趋势 */}
+      {/* AI模型性能趋势 + 实时数据流 */}
       <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle>学习效果统计</CardTitle>
-            <CardDescription>过去30天的模型性能变化</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">准确率提升</span>
-                  <span className="text-lg font-bold text-chart-2">+3.2%</span>
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>学习效果统计</CardTitle>
+              <CardDescription>过去30天的模型性能变化</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">准确率提升</span>
+                    <span className="text-lg font-bold text-chart-2">+3.2%</span>
+                  </div>
+                  <Progress value={95} className="h-2" />
                 </div>
-                <Progress value={95} className="h-2" />
-              </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">误报率降低</span>
-                  <span className="text-lg font-bold text-chart-2">-1.8%</span>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">误报率降低</span>
+                    <span className="text-lg font-bold text-chart-2">-1.8%</span>
+                  </div>
+                  <Progress value={82} className="h-2" />
                 </div>
-                <Progress value={82} className="h-2" />
-              </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">处理速度提升</span>
-                  <span className="text-lg font-bold text-chart-2">+15%</span>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">处理速度提升</span>
+                    <span className="text-lg font-bold text-chart-2">+15%</span>
+                  </div>
+                  <Progress value={88} className="h-2" />
                 </div>
-                <Progress value={88} className="h-2" />
-              </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">新类别识别能力</span>
-                  <span className="text-lg font-bold text-chart-2">+5类</span>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-muted-foreground">新类别识别能力</span>
+                    <span className="text-lg font-bold text-chart-2">+5类</span>
+                  </div>
+                  <Progress value={75} className="h-2" />
                 </div>
-                <Progress value={75} className="h-2" />
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>学习数据源</CardTitle>
-            <CardDescription>训练样本来源分布</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-chart-1" />
-                  <span className="text-sm">AI未识别</span>
+          <Card>
+            <CardHeader>
+              <CardTitle>学习数据源</CardTitle>
+              <CardDescription>训练样本来源分布</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-chart-1" />
+                    <span className="text-sm">AI未识别</span>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium">0</p>
+                    <p className="text-xs text-muted-foreground">0%</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-medium">1,234</p>
-                  <p className="text-xs text-muted-foreground">38%</p>
-                </div>
-              </div>
 
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-chart-2" />
-                  <span className="text-sm">人工复核可疑</span>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-chart-2" />
+                    <span className="text-sm">人工复核</span>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium">25</p>
+                    <p className="text-xs text-muted-foreground">1%</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-medium">987</p>
-                  <p className="text-xs text-muted-foreground">30%</p>
-                </div>
-              </div>
 
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-chart-3" />
-                  <span className="text-sm">超时未判断</span>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-chart-3" />
+                    <span className="text-sm">超时未判断</span>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium">0</p>
+                    <p className="text-xs text-muted-foreground">0%</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-medium">654</p>
-                  <p className="text-xs text-muted-foreground">20%</p>
-                </div>
-              </div>
 
-              <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-chart-4" />
-                  <span className="text-sm">人工标注</span>
-                </div>
-                <div className="text-right">
-                  <p className="font-medium">370</p>
-                  <p className="text-xs text-muted-foreground">12%</p>
+                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-chart-4" />
+                    <span className="text-sm">违禁品检出</span>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium">45</p>
+                    <p className="text-xs text-muted-foreground">99%</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* AI实时数据流分析 */}
+        <AIDataStream />
       </div>
 
       {/* 自动学习配置 */}

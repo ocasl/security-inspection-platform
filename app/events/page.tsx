@@ -2,8 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { AlertTriangle, Clock, CheckCircle, XCircle, Calendar } from "lucide-react"
 import { generateAlertRecords } from "@/lib/mock-data"
 import { Badge } from "@/components/ui/badge"
-import { formatDistanceToNow } from "date-fns"
-import { zhCN } from "date-fns/locale"
+import { format } from "date-fns"
 
 export default function EventsPage() {
   const events = generateAlertRecords(100)
@@ -42,84 +41,87 @@ export default function EventsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="border-l-4 border-l-primary pl-4 py-2 bg-gradient-to-r from-primary/5 to-transparent">
+      <div className="border-l-4 border-l-primary pl-4 py-3 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent shadow-lg shadow-primary/5">
         <h1 className="text-3xl font-bold tracking-tight text-balance text-foreground">事件管理</h1>
-        <p className="text-muted-foreground mt-2 text-sm">查看和管理系统报警事件</p>
+        <p className="text-muted-foreground mt-2 text-sm">
+          <span className="font-semibold text-foreground">广东守门神科技集团</span> | 
+          <span className="text-primary font-semibold"></span>
+        </p>
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">
-        <Card className="border-l-4 border-l-primary shadow-md hover:shadow-lg transition-shadow">
+        <Card className="border border-primary/30 shadow-lg shadow-primary/10 hover:shadow-primary/20 hover:border-primary/50 transition-all bg-card/50 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-foreground/80">总事件数</CardTitle>
-            <div className="rounded-lg bg-primary/10 p-2">
+            <div className="rounded-lg bg-primary/20 p-2 shadow-inner shadow-primary/30">
               <Calendar className="h-5 w-5 text-primary" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-primary">{events.length}</div>
+            <div className="text-3xl font-bold text-primary drop-shadow-[0_0_8px_rgba(0,200,255,0.5)]">{events.length}</div>
             <p className="text-xs text-muted-foreground mt-1">所有报警事件</p>
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-destructive shadow-md hover:shadow-lg transition-shadow">
+        <Card className="border border-destructive/30 shadow-lg shadow-destructive/10 hover:shadow-destructive/20 hover:border-destructive/50 transition-all bg-card/50 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-foreground/80">未处理</CardTitle>
-            <div className="rounded-lg bg-destructive/10 p-2">
+            <div className="rounded-lg bg-destructive/20 p-2 shadow-inner shadow-destructive/30">
               <XCircle className="h-5 w-5 text-destructive" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-destructive">{unhandled}</div>
+            <div className="text-3xl font-bold text-destructive drop-shadow-[0_0_8px_rgba(255,80,80,0.5)]">{unhandled}</div>
             <p className="text-xs text-muted-foreground mt-1">等待处理</p>
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-chart-2 shadow-md hover:shadow-lg transition-shadow">
+        <Card className="border border-chart-2/30 shadow-lg shadow-chart-2/10 hover:shadow-chart-2/20 hover:border-chart-2/50 transition-all bg-card/50 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-foreground/80">处理中</CardTitle>
-            <div className="rounded-lg bg-chart-2/10 p-2">
+            <div className="rounded-lg bg-chart-2/20 p-2 shadow-inner shadow-chart-2/30">
               <Clock className="h-5 w-5 text-chart-2" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-chart-2">{inProgress}</div>
+            <div className="text-3xl font-bold text-chart-2 drop-shadow-[0_0_8px_rgba(80,255,150,0.5)]">{inProgress}</div>
             <p className="text-xs text-muted-foreground mt-1">正在处理</p>
           </CardContent>
         </Card>
 
-        <Card className="border-l-4 border-l-accent shadow-md hover:shadow-lg transition-shadow">
+        <Card className="border border-accent/30 shadow-lg shadow-accent/10 hover:shadow-accent/20 hover:border-accent/50 transition-all bg-card/50 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-foreground/80">已处理</CardTitle>
-            <div className="rounded-lg bg-accent/10 p-2">
+            <div className="rounded-lg bg-accent/20 p-2 shadow-inner shadow-accent/30">
               <CheckCircle className="h-5 w-5 text-accent" />
             </div>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-accent">{handled}</div>
+            <div className="text-3xl font-bold text-accent drop-shadow-[0_0_8px_rgba(150,255,80,0.5)]">{handled}</div>
             <p className="text-xs text-muted-foreground mt-1">处理完成</p>
           </CardContent>
         </Card>
       </div>
 
-      <Card className="shadow-md border-t-4 border-t-primary">
+      <Card className="shadow-lg border border-primary/30 shadow-primary/10 bg-card/50 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-lg font-bold">报警事件列表</CardTitle>
+          <CardTitle className="text-lg font-bold text-foreground">报警事件列表</CardTitle>
           <CardDescription>所有报警事件的详细信息</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-2">
+          <div className="space-y-3">
             {events.slice(0, 30).map((event) => (
               <div
                 key={event.id}
-                className="flex items-start justify-between rounded-lg border border-border bg-muted/30 p-3 hover:bg-muted/50 transition-colors"
+                className="flex items-start justify-between rounded-lg border border-border bg-card/80 p-4 hover:bg-card/90 hover:border-primary/30 transition-all"
               >
                 <div className="flex items-start gap-3 flex-1">
-                  <div className="rounded-lg bg-destructive/10 p-2 mt-1">
+                  <div className="rounded-lg bg-destructive/20 p-2 mt-1">
                     <AlertTriangle className="h-5 w-5 text-destructive" />
                   </div>
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <p className="text-sm font-semibold">{event.id}</p>
+                      <p className="text-sm font-bold text-foreground">{event.id}</p>
                       <Badge variant={getLevelVariant(event.level)} className="text-xs">
                         {event.level}
                       </Badge>
@@ -129,10 +131,7 @@ export default function EventsPage() {
                     </div>
                     <p className="text-sm text-foreground">{event.message}</p>
                     <p className="text-xs text-muted-foreground">
-                      设备: {event.deviceId} · {formatDistanceToNow(new Date(event.timestamp), { 
-                        addSuffix: true,
-                        locale: zhCN 
-                      })}
+                      设备: {event.deviceId} · {format(new Date(event.timestamp), "yyyy-MM-dd HH:mm:ss")}
                     </p>
                     {event.handler && (
                       <p className="text-xs text-muted-foreground">

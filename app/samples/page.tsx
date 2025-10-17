@@ -6,15 +6,22 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { generateTrainingSamples } from "@/lib/mock-data"
-import { Database, Upload, Tag, CheckCircle2, Clock, Search, Filter, Image as ImageIcon } from "lucide-react"
+import { Database, Upload, Tag, CheckCircle2, Clock, Search, Filter } from "lucide-react"
 import { formatDistanceToNow } from "date-fns"
 import { zhCN } from "date-fns/locale"
 import { useState } from "react"
+// @ts-ignore
+import imageData from "@/public/Thunderbit_ebc83b_20251017_032403.json"
 
 export default function SamplesPage() {
   const [filterSource, setFilterSource] = useState<string>("all")
   const [filterLabeled, setFilterLabeled] = useState<string>("all")
   const [searchQuery, setSearchQuery] = useState("")
+  
+  // 提取所有图片URL
+  const xrayImages = imageData
+    .map((item: any) => item.png || item.jpg || item.jpeg)
+    .filter((url: string) => url)
   
   const allSamples = generateTrainingSamples(100)
   
@@ -151,34 +158,44 @@ export default function SamplesPage() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredSamples.slice(0, 24).map((sample) => (
-              <Card key={sample.id} className="overflow-hidden">
-                <div className="aspect-video bg-muted flex items-center justify-center relative group">
-                  <ImageIcon className="h-12 w-12 text-muted-foreground" />
-                  <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                    <Button size="sm" variant="secondary">
-                      查看
-                    </Button>
-                    {!sample.labeled && (
-                      <Button size="sm">
-                        标注
+            {filteredSamples.slice(0, 24).map((sample, index) => {
+              // 为每个样本分配一个真实的X光图片
+              const imageUrl = xrayImages[index % xrayImages.length]
+              
+              return (
+                <Card key={sample.id} className="overflow-hidden">
+                  <div className="aspect-video bg-muted flex items-center justify-center relative group overflow-hidden">
+                    {/* 显示真实的X光图片 */}
+                    <img 
+                      src={imageUrl}
+                      alt={`X光图片 ${sample.id}`}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      <Button size="sm" variant="secondary">
+                        查看
                       </Button>
-                    )}
+                      {!sample.labeled && (
+                        <Button size="sm">
+                          标注
+                        </Button>
+                      )}
+                    </div>
+                    <div className="absolute top-2 right-2 flex gap-1">
+                      {sample.labeled ? (
+                        <Badge variant="default" className="text-xs bg-chart-2">
+                          <CheckCircle2 className="h-3 w-3 mr-1" />
+                          已标注
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary" className="text-xs bg-yellow-500/90 text-white">
+                          <Clock className="h-3 w-3 mr-1" />
+                          待标注
+                        </Badge>
+                      )}
+                    </div>
                   </div>
-                  <div className="absolute top-2 right-2 flex gap-1">
-                    {sample.labeled ? (
-                      <Badge variant="default" className="text-xs">
-                        <CheckCircle2 className="h-3 w-3 mr-1" />
-                        已标注
-                      </Badge>
-                    ) : (
-                      <Badge variant="secondary" className="text-xs">
-                        <Clock className="h-3 w-3 mr-1" />
-                        待标注
-                      </Badge>
-                    )}
-                  </div>
-                </div>
                 <CardContent className="p-3">
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
@@ -225,7 +242,8 @@ export default function SamplesPage() {
                   </div>
                 </CardContent>
               </Card>
-            ))}
+              )
+            })}
           </div>
 
           {filteredSamples.length === 0 && (

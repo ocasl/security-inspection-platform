@@ -44,7 +44,11 @@ export default function MonitoringPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">实时监控</h1>
-          <p className="text-muted-foreground mt-2">监控设备状态、AI识别结果和报警信息</p>
+          <p className="text-muted-foreground mt-2">
+            <span className="font-semibold text-foreground">使用单位：成安县人民法院</span>
+            <span className="mx-2">|</span>
+            监控设备状态、AI识别结果和报警信息
+          </p>
         </div>
         <Button onClick={handleRefresh} disabled={refreshing}>
           <RefreshCw className={`h-4 w-4 mr-2 ${refreshing ? 'animate-spin' : ''}`} />

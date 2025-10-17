@@ -4,8 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { generateAlertRecords } from "@/lib/mock-data"
 import { AlertTriangle, Bell, Volume2 } from "lucide-react"
-import { formatDistanceToNow } from "date-fns"
-import { zhCN } from "date-fns/locale"
+import { format } from "date-fns"
 
 export function RecentAlerts() {
   const alerts = generateAlertRecords(20)
@@ -43,28 +42,28 @@ export function RecentAlerts() {
   }
 
   return (
-    <Card className="shadow-md border-t-4 border-t-chart-2">
+    <Card className="shadow-lg border border-chart-2/30 shadow-chart-2/10 bg-card/50 backdrop-blur-sm">
       <CardHeader>
-        <CardTitle className="text-lg font-bold">最近报警</CardTitle>
-        <CardDescription>最新的系统报警信息</CardDescription>
+        <CardTitle className="text-lg font-bold text-foreground">报警事件记录</CardTitle>
+        <CardDescription>智慧安检管理平台运行期间的报警信息</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-3">
           {alerts.map((alert) => (
             <div
               key={alert.id}
-              className="flex items-start justify-between rounded-lg border border-border bg-muted/30 p-3 hover:bg-muted/50 transition-colors"
+              className="flex items-start justify-between rounded-lg border border-border bg-card/80 p-3 hover:bg-card/90 hover:border-primary/30 transition-all"
             >
               <div className="flex items-start gap-3 flex-1">
                 <div className="relative">
-                  <AlertTriangle className="h-4 w-4 text-destructive mt-0.5" />
+                  <AlertTriangle className="h-5 w-5 text-destructive mt-0.5" />
                   {alert.soundAlert && (
                     <Volume2 className="h-3 w-3 text-destructive absolute -top-1 -right-1" />
                   )}
                 </div>
                 <div className="space-y-1 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-sm font-medium">{alert.type}</p>
+                    <p className="text-sm font-semibold text-foreground">{alert.type}</p>
                     <Badge variant={getLevelVariant(alert.level)} className="text-xs">
                       {alert.level}
                     </Badge>
@@ -72,12 +71,9 @@ export function RecentAlerts() {
                       {alert.status}
                     </Badge>
                   </div>
-                  <p className="text-xs text-muted-foreground">{alert.message}</p>
+                  <p className="text-sm text-muted-foreground">{alert.message}</p>
                   <p className="text-xs text-muted-foreground">
-                    {alert.deviceId} · {formatDistanceToNow(new Date(alert.timestamp), { 
-                      addSuffix: true,
-                      locale: zhCN 
-                    })}
+                    {alert.deviceId} · {format(new Date(alert.timestamp), "yyyy-MM-dd HH:mm:ss")}
                   </p>
                 </div>
               </div>

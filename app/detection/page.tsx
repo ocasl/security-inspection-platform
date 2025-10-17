@@ -8,10 +8,25 @@ import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { generateDetectionRecords, prohibitedItems } from "@/lib/mock-data"
-import { Upload, Image as ImageIcon, AlertTriangle, CheckCircle2, XCircle, Search, Filter } from "lucide-react"
-import { formatDistanceToNow } from "date-fns"
-import { zhCN } from "date-fns/locale"
+import { Upload, Image as ImageIcon, AlertTriangle, CheckCircle2, XCircle, Search, Filter, Scan, Activity } from "lucide-react"
+import { format } from "date-fns"
 import { useState } from "react"
+import { XRayImageViewer } from "@/components/xray-image-viewer"
+// 不再需要NextImage，使用普通img标签显示外部URL
+
+// @ts-ignore
+import imageData from "@/public/Thunderbit_ebc83b_20251017_032403.json"
+
+// X光图片列表 - 从JSON中提取
+const xrayImages = imageData
+  .map((item: any) => item.png || item.jpg || item.jpeg)
+  .filter((url: string) => url)
+
+// 随机获取X光图片
+const getRandomXrayImage = (id: string) => {
+  const index = parseInt(id.replace(/\D/g, '')) % xrayImages.length
+  return xrayImages[index]
+}
 
 export default function DetectionPage() {
   const [filterResult, setFilterResult] = useState<string>("all")
@@ -135,76 +150,93 @@ export default function DetectionPage() {
         </Card>
       </div>
 
-      {/* 实时识别演示 */}
-      <Card>
+      {/* AI智能巡检动画 */}
+      <Card className="shadow-lg border border-primary/30 shadow-primary/10 bg-card/50 backdrop-blur-sm overflow-hidden">
         <CardHeader>
-          <CardTitle>实时识别</CardTitle>
-          <CardDescription>上传X光图像进行AI智能识别</CardDescription>
+          <CardTitle className="text-foreground flex items-center gap-2">
+            <Scan className="h-5 w-5 text-primary animate-pulse" />
+                  AI智能巡检系统
+                </CardTitle>
+                <CardDescription>智慧安检管理平台 - 广东守门神科技集团</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-6 md:grid-cols-2">
             <div className="space-y-4">
-              <div className="border-2 border-dashed border-border rounded-lg p-12 text-center">
-                <Upload className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-sm text-muted-foreground mb-2">拖拽图像到这里或点击上传</p>
-                <Button variant="outline" size="sm">
-                  选择文件
-                </Button>
-              </div>
-
-              <div className="space-y-2">
-                <Label>选择AI模型</Label>
-                <Select defaultValue="main">
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="main">违禁品检测主模型 v3.2.1</SelectItem>
-                    <SelectItem value="liquid">液体检测专用模型 v2.1.0</SelectItem>
-                    <SelectItem value="knife">刀具识别模型 v4.0.0</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>置信度阈值</Label>
-                <Input type="number" min="0" max="1" step="0.01" defaultValue="0.75" />
-                <p className="text-xs text-muted-foreground">低于此阈值的结果将标记为可疑</p>
-              </div>
-
-              <Button className="w-full">
-                开始识别
-              </Button>
-            </div>
-
-            <div className="space-y-4">
-              <div className="rounded-lg border border-border bg-muted/50 aspect-video flex items-center justify-center">
-                <div className="text-center text-muted-foreground">
-                  <ImageIcon className="h-16 w-16 mx-auto mb-2" />
-                  <p className="text-sm">识别结果将在这里显示</p>
+              <div className="relative border-2 border-primary/30 rounded-lg p-8 bg-gradient-to-br from-primary/5 to-accent/5 overflow-hidden">
+                {/* 扫描动画 */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/20 to-transparent animate-scan" />
+                
+                <div className="relative z-10 text-center space-y-4">
+                  <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-primary/20 animate-pulse">
+                    <Scan className="h-10 w-10 text-primary animate-spin-slow" />
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-lg font-bold text-primary animate-pulse">AI算法正在巡视中...</p>
+                    <p className="text-sm text-muted-foreground">实时扫描 · 智能识别 · 自动预警</p>
+                  </div>
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-primary animate-ping" />
+                    <div className="w-2 h-2 rounded-full bg-chart-2 animate-ping animation-delay-200" />
+                    <div className="w-2 h-2 rounded-full bg-accent animate-ping animation-delay-400" />
+                  </div>
                 </div>
               </div>
 
-              <Card>
+              <Card className="bg-card/80 border-accent/30">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base">识别详情</CardTitle>
+                  <CardTitle className="text-sm text-foreground flex items-center gap-2">
+                    <Activity className="h-4 w-4 text-accent" />
+                    实时状态
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">检测结果</span>
-                    <Badge>等待识别</Badge>
+                <CardContent className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">巡检模式</span>
+                    <Badge className="bg-primary/20 text-primary border-primary/30">自动巡检</Badge>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">置信度</span>
-                    <span>--</span>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">AI模型</span>
+                    <span className="text-foreground">违禁品检测 v3.2.1</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">处理时间</span>
-                    <span>--</span>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">巡检周期</span>
+                    <span className="text-primary font-semibold"></span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">检出物品</span>
-                    <span>--</span>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">已处理</span>
+                                <span className="text-chart-2 font-semibold">6,347 件</span>
+                              </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="space-y-4">
+              {/* 真实X光安检图像 */}
+              <XRayImageViewer autoRotate={true} interval={6000} />
+
+              <Card className="bg-card/80 border-destructive/30">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm text-foreground flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 text-destructive animate-pulse" />
+                    检测详情
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">扫描状态</span>
+                    <Badge className="bg-chart-2/20 text-chart-2 border-chart-2/30">监控中</Badge>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">准确率</span>
+                    <span className="text-chart-2 font-semibold">96.8%</span>
+                  </div>
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">违禁品检出</span>
+                                <span className="text-destructive font-semibold">45 件</span>
+                              </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">最后扫描</span>
+                    <span className="text-foreground">2025-04-30 18:00</span>
                   </div>
                 </CardContent>
               </Card>
@@ -254,8 +286,13 @@ export default function DetectionPage() {
                 key={detection.id}
                 className="flex items-start gap-4 rounded-lg border border-border bg-card/50 p-4 hover:bg-accent/50 transition-colors cursor-pointer"
               >
-                <div className="w-24 h-24 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
-                  <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                <div className="w-24 h-24 rounded-lg overflow-hidden bg-black flex-shrink-0 relative border border-primary/20">
+                  <img
+                    src={getRandomXrayImage(detection.id)}
+                    alt="X-ray scan"
+                    className="w-full h-full object-cover"
+                    style={{ filter: 'contrast(1.2) brightness(1.1)' }}
+                  />
                 </div>
 
                 <div className="flex-1 space-y-2">
@@ -275,10 +312,7 @@ export default function DetectionPage() {
                       </div>
                     </div>
                     <span className="text-xs text-muted-foreground">
-                      {formatDistanceToNow(new Date(detection.timestamp), { 
-                        addSuffix: true,
-                        locale: zhCN 
-                      })}
+                      {format(new Date(detection.timestamp), "yyyy-MM-dd HH:mm")}
                     </span>
                   </div>
 
